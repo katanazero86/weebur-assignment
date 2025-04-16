@@ -1,14 +1,33 @@
+'use client';
+
 import Typography from '@/components/typography/Typography';
 import { Star } from 'lucide-react';
+import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
+import { useSearchProducts } from '@/hooks/apis/useSearchProducts';
+import Spinner from '@/components/spinner/Spinner';
 
 interface ProductsViewsListProps {
   products: Api.Products;
+  q: string;
+  sortBy: string;
+  order: string;
 }
 
-export default function ProductsViewsList({ products }: ProductsViewsListProps) {
+export default function ProductsViewsList({ products, q, sortBy, order }: ProductsViewsListProps) {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSearchProducts({
+    q,
+    sortBy,
+    order,
+    initialData: products,
+  });
+  const { ref } = useIntersectionObserver(() => fetchNextPage());
+  const targetProducts = data.pages.flatMap((page) => {
+    return page.products;
+  });
+
   return (
     <section>
-      {products.products.map((product) => (
+      {targetProducts.map((product) => (
         <div key={product.id} className="flex shadow-md rounded-lg my-4 p-4 bg-white">
           <img
             src={product.thumbnail}
@@ -36,6 +55,17 @@ export default function ProductsViewsList({ products }: ProductsViewsListProps) 
           </div>
         </div>
       ))}
+      {isFetchingNextPage && (
+        <div className="flex items-center justify-center mt-10">
+          <Spinner />
+        </div>
+      )}
+      {!isFetchingNextPage && hasNextPage && <div ref={ref} className="h-[50px] w-full"></div>}
+      {!hasNextPage && (
+        <Typography as="p" className="text-gray-500 text-xl text-center py-10">
+          더 이상 불러올 수 없습니다.
+        </Typography>
+      )}
     </section>
   );
 }

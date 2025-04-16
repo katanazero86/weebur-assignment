@@ -17,7 +17,7 @@ const findProducts = async (page = 1, limit = 20, q = '', sortBy = '', order = '
       params.set('sortBy', String(sortBy));
       params.set('order', order);
     }
-    // const q = `limit=${limit}&skip=${skip}`;
+
     const res = await fetch(`https://dummyjson.com/products/search?${params.toString()}`, {});
     if (res.ok) {
       return await res.json();
@@ -62,8 +62,6 @@ export default async function Index({ searchParams }: IndexProps) {
       </main>
     );
 
-  console.log(products);
-
   return (
     <main className="font-[family-name:var(--font-noto-sans-kr)] h-full">
       <ProductsSearchForm />
@@ -75,9 +73,9 @@ export default async function Index({ searchParams }: IndexProps) {
       {products.products.length > 0 && (
         <>
           {!targetView ? (
-            <ProductsViewsList products={products} />
+            <ProductsViewsList products={products} q={q} sortBy={sortBy} order={order} />
           ) : targetView.value === 'list' ? (
-            <ProductsViewsList products={products} />
+            <ProductsViewsList products={products} q={q} sortBy={sortBy} order={order} />
           ) : (
             <ProductsViewsGrid products={products} />
           )}
