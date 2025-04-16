@@ -40,9 +40,9 @@ interface IndexProps {
 }
 
 export default async function Index({ searchParams }: IndexProps) {
-  const q = searchParams?.q ?? '';
-  const sortBy = searchParams?.sortBy ?? '';
-  const order = searchParams?.order ?? '';
+  const q = (await searchParams?.q) ?? '';
+  const sortBy = (await searchParams?.sortBy) ?? '';
+  const order = (await searchParams?.order) ?? '';
 
   const myCookie = await cookies();
   const targetView = myCookie.get('my-cookie');
@@ -77,7 +77,7 @@ export default async function Index({ searchParams }: IndexProps) {
           ) : targetView.value === 'list' ? (
             <ProductsViewsList products={products} q={q} sortBy={sortBy} order={order} />
           ) : (
-            <ProductsViewsGrid products={products} />
+            <ProductsViewsGrid products={products} q={q} sortBy={sortBy} order={order} />
           )}
         </>
       )}

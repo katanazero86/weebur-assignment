@@ -1,17 +1,38 @@
+'use client';
+
+import Image from 'next/image';
 import Typography from '@/components/typography/Typography';
 import { Star } from 'lucide-react';
+import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
+import { useSearchProducts } from '@/hooks/apis/useSearchProducts';
+import Spinner from '@/components/spinner/Spinner';
+import NoDataToLoad from '@/components/productsViews/noDataToLoad/NoDataToLoad';
 
 interface ProductsViewsGridProps {
   products: Api.Products;
+  q: string;
+  sortBy: string;
+  order: '' | 'asc' | 'desc';
 }
 
-export default function ProductsViewsGrid({ products }: ProductsViewsGridProps) {
+export default function ProductsViewsGrid({ products, q, sortBy, order }: ProductsViewsGridProps) {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSearchProducts({
+    q,
+    sortBy,
+    order,
+    initialData: products,
+  });
+  const { ref } = useIntersectionObserver(() => fetchNextPage());
+  const targetProducts = data.pages.flatMap((page) => {
+    return page.products;
+  });
+
   return (
     <section>
       <div className="grid grid-cols-4 gap-1 max-md:grid-cols-2">
-        {products.products.map((product) => (
+        {targetProducts.map((product) => (
           <div key={product.id} className="flex flex-col shadow-md rounded-lg my-4 p-4 bg-white">
-            <img
+            <Image
               src={product.thumbnail}
               alt={product.title}
               width={300}
@@ -38,6 +59,13 @@ export default function ProductsViewsGrid({ products }: ProductsViewsGridProps) 
           </div>
         ))}
       </div>
+      {isFetchingNextPage && (
+        <div className="flex items-center justify-center mt-10">
+          <Spinner />
+        </div>
+      )}
+      {!isFetchingNextPage && hasNextPage && <div ref={ref} className="h-[50px] w-full"></div>}
+      {!hasNextPage && <NoDataToLoad />}
     </section>
   );
 }

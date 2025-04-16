@@ -34,7 +34,7 @@ export default function ProductsSearchForm() {
       router.push(state.redirectUrl);
       delete state.redirectUrl;
     }
-  }, [state.redirectUrl]);
+  }, [router, state.redirectUrl]);
 
   return (
     <form className="flex flex-wrap gap-1 border-b border-gray-200 p-4" action={formAction}>

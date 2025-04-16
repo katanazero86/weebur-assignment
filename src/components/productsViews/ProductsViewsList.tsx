@@ -1,16 +1,18 @@
 'use client';
 
-import Typography from '@/components/typography/Typography';
+import Image from 'next/image';
 import { Star } from 'lucide-react';
+import Typography from '@/components/typography/Typography';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { useSearchProducts } from '@/hooks/apis/useSearchProducts';
 import Spinner from '@/components/spinner/Spinner';
+import NoDataToLoad from '@/components/productsViews/noDataToLoad/NoDataToLoad';
 
 interface ProductsViewsListProps {
   products: Api.Products;
   q: string;
   sortBy: string;
-  order: string;
+  order: '' | 'asc' | 'desc';
 }
 
 export default function ProductsViewsList({ products, q, sortBy, order }: ProductsViewsListProps) {
@@ -29,7 +31,7 @@ export default function ProductsViewsList({ products, q, sortBy, order }: Produc
     <section>
       {targetProducts.map((product) => (
         <div key={product.id} className="flex shadow-md rounded-lg my-4 p-4 bg-white">
-          <img
+          <Image
             src={product.thumbnail}
             alt={product.title}
             width={300}
@@ -61,11 +63,7 @@ export default function ProductsViewsList({ products, q, sortBy, order }: Produc
         </div>
       )}
       {!isFetchingNextPage && hasNextPage && <div ref={ref} className="h-[50px] w-full"></div>}
-      {!hasNextPage && (
-        <Typography as="p" className="text-gray-500 text-xl text-center py-10">
-          더 이상 불러올 수 없습니다.
-        </Typography>
-      )}
+      {!hasNextPage && <NoDataToLoad />}
     </section>
   );
 }
