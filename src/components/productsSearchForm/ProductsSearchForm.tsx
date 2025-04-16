@@ -3,6 +3,9 @@
 import { useActionState, useEffect, useState } from 'react';
 import { productsSearchAction, ProductsSearchActionState } from '@/actions/productsSearch';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Button from '@/components/forms/button/Button';
+import InputText from '@/components/forms/inputText/InputText';
+import Select from '@/components/forms/select/Select';
 
 export default function ProductsSearchForm() {
   const searchParams = useSearchParams();
@@ -18,8 +21,19 @@ export default function ProductsSearchForm() {
   const [state, formAction, isPending] = useActionState(productsSearchAction, initialState);
 
   const [formObj, setFormObj] = useState(initialState);
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormObj({ ...formObj, [e.target.name]: e.target.value });
+
+  const handleQChange = (targetValue: string) => {
+    setFormObj({
+      ...formObj,
+      q: targetValue,
+    });
+  };
+
+  const handleSortByChange = (targetValue: string) => {
+    setFormObj({
+      ...formObj,
+      sortBy: targetValue,
+    });
   };
 
   useEffect(() => {
@@ -38,36 +52,28 @@ export default function ProductsSearchForm() {
 
   return (
     <form className="flex flex-wrap gap-1 border-b border-gray-200 p-4" action={formAction}>
-      <div className="flex-grow flex items-center gap-2 mb-2">
-        <input
-          className="flex-1 w-full p-3 outline-none rounded border border-gray-300 h-[50px]"
-          type="text"
-          name="q"
-          placeholder="검색어를 입력해주세요."
-          autoFocus={true}
-          onChange={handleChange}
-          value={formObj.q}
-        />
-        <select
-          className="flex-1 p-3 border border-gray-200 h-[50px] outline-none cursor-pointer"
-          name="sortBy"
-          onChange={handleChange}
-          value={formObj.sortBy}
-        >
-          <option disabled value="">
-            정렬 방식 선택
-          </option>
-          <option value="rating">별점 높은순</option>
-          <option value="reviews">후기 많은순</option>
-        </select>
+      <div className="flex-grow flex items-center gap-2 max-md:mb-2">
+        <div className="basis-6/12">
+          <InputText name="q" placeholder="검색어를 입력해주세요." onChange={handleQChange} value={formObj.q} />
+        </div>
+        <div className="basis-6/12">
+          <Select
+            name="sortBy"
+            initOptions={[
+              { label: '정렬 방식 선택', value: '', disabled: true },
+              { label: '별점 높은순', value: 'rating' },
+              { label: '후기 많은순', value: 'reviews' },
+            ]}
+            onChange={handleSortByChange}
+            value={formObj.sortBy}
+          />
+        </div>
       </div>
-      <button
-        disabled={isPending}
-        className="border-indigo-600 border bg-indigo-600 rounded text-white px-4 py-2 cursor-pointer hover:bg-indigo-700 hover:border-indigo-700 h-[50px] w-[100px] max-md:w-full"
-        type="submit"
-      >
-        검색
-      </button>
+      <div className="basis-2/12 max-md:basis-12/12">
+        <Button type="submit" disabled={isPending}>
+          검색
+        </Button>
+      </div>
     </form>
   );
 }
