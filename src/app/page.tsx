@@ -32,17 +32,18 @@ const findProducts = async (page = 1, limit = 20, q = '', sortBy = '', order = '
 };
 
 interface IndexProps {
-  searchParams?: {
+  searchParams?: Promise<{
     q: string;
     sortBy: string;
     order: 'asc' | 'desc';
-  };
+  }>;
 }
 
 export default async function Index({ searchParams }: IndexProps) {
-  const q = (await searchParams?.q) ?? '';
-  const sortBy = (await searchParams?.sortBy) ?? '';
-  const order = (await searchParams?.order) ?? '';
+  const params = await searchParams;
+  const q = params?.q ?? '';
+  const sortBy = params?.sortBy ?? '';
+  const order = params?.order ?? '';
 
   const myCookie = await cookies();
   const targetView = myCookie.get('my-cookie');
