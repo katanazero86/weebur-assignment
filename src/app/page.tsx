@@ -1,6 +1,7 @@
+import { cookies } from 'next/headers';
 import Typography from '@/components/typography/Typography';
-import List from '@/components/productsViews/ProductsViewsList';
 import ProductsViewsGrid from '@/components/productsViews/ProductsViewsGrid';
+import ProductsViewsList from '@/components/productsViews/ProductsViewsList';
 
 const findProducts = async (page = 1, limit = 20): Promise<Api.Products> => {
   try {
@@ -20,6 +21,8 @@ const findProducts = async (page = 1, limit = 20): Promise<Api.Products> => {
 };
 
 export default async function Index() {
+  const myCookie = await cookies();
+  const targetView = myCookie.get('my-cookie');
   let products;
   try {
     products = await findProducts();
@@ -38,8 +41,13 @@ export default async function Index() {
 
   return (
     <main className="font-[family-name:var(--font-noto-sans-kr)]">
-      <List products={products} />
-      <ProductsViewsGrid products={products} />
+      {!targetView ? (
+        <ProductsViewsList products={products} />
+      ) : targetView.value === 'list' ? (
+        <ProductsViewsList products={products} />
+      ) : (
+        <ProductsViewsGrid products={products} />
+      )}
     </main>
   );
 }
