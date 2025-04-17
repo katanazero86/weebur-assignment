@@ -36,7 +36,8 @@ export default function ProductsViewsList({ products, q, sortBy, order }: Produc
             alt={product.title}
             width={300}
             height={300}
-            className="object-cover w-full max-w-[300px] h-auto basis-[300px] max-md:max-w-[150px]"
+            objectFit="cover"
+            className="w-full max-w-[300px] max-md:max-w-[150px]"
           />
           <div className="p-2 flex-1 min-w-[0px]">
             <Typography as="h2" className="font-semibold text-[18px]">

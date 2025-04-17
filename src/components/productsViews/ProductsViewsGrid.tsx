@@ -32,13 +32,16 @@ export default function ProductsViewsGrid({ products, q, sortBy, order }: Produc
       <div className="grid grid-cols-4 gap-1 max-md:grid-cols-2">
         {targetProducts.map((product) => (
           <div key={product.id} className="flex flex-col shadow-md rounded-lg my-4 p-4 bg-white">
-            <Image
-              src={product.thumbnail}
-              alt={product.title}
-              width={300}
-              height={300}
-              className="object-cover w-full max-w-[300px]"
-            />
+            <div className="flex justify-center">
+              <Image
+                src={product.thumbnail}
+                alt={product.title}
+                width={300}
+                height={300}
+                objectFit="cover"
+                className="w-full max-w-[300px]"
+              />
+            </div>
             <div className="p-2 flex-1 min-w-[0px]">
               <Typography as="h2" className="font-semibold text-[18px] max-md:text-[16px]">
                 [상품명] {product.title}
