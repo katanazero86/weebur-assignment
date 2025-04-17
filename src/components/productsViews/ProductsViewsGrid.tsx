@@ -16,7 +16,7 @@ interface ProductsViewsGridProps {
 }
 
 export default function ProductsViewsGrid({ products, q, sortBy, order }: ProductsViewsGridProps) {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSearchProducts({
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isError, error } = useSearchProducts({
     q,
     sortBy,
     order,
@@ -26,6 +26,11 @@ export default function ProductsViewsGrid({ products, q, sortBy, order }: Produc
   const targetProducts = data.pages.flatMap((page) => {
     return page.products;
   });
+
+  if (isError) {
+    console.error(error);
+    return <Typography>에러가 발생하였습니다. 잠시 후 다시 시도해 주세요.</Typography>;
+  }
 
   return (
     <section>
@@ -38,8 +43,7 @@ export default function ProductsViewsGrid({ products, q, sortBy, order }: Produc
                 alt={product.title}
                 width={300}
                 height={300}
-                objectFit="cover"
-                className="w-full max-w-[300px]"
+                className="w-full max-w-[300px] object-cover"
               />
             </div>
             <div className="p-2 flex-1 min-w-[0px]">

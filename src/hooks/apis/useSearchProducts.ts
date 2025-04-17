@@ -1,34 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-
-const findProducts = async ({
-  page = 1,
-  limit = 20,
-  q = '',
-  sortBy = '',
-  order = '',
-}: {
-  page?: number;
-  limit?: number;
-  q?: string;
-  sortBy?: string;
-  order?: string;
-}): Promise<Api.Products> => {
-  const skip = (page - 1) * limit;
-  const params = new URLSearchParams();
-
-  params.set('limit', String(limit));
-  params.set('skip', String(skip));
-  if (q) params.set('q', q);
-  if (sortBy) {
-    params.set('sortBy', sortBy);
-    params.set('order', order);
-  }
-
-  const res = await fetch(`https://dummyjson.com/products/search?${params.toString()}`);
-  if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
-
-  return res.json();
-};
+import { api } from '@/api';
 
 export const useSearchProducts = ({
   q,
@@ -44,7 +15,7 @@ export const useSearchProducts = ({
   return useInfiniteQuery({
     queryKey: ['searchProducts', q, sortBy, order],
     queryFn: async ({ pageParam = 1 }) => {
-      return findProducts({ page: pageParam, q, sortBy, order });
+      return api.productApi.findProducts(pageParam, 20, q, sortBy, order);
     },
     getNextPageParam: (lastPage, allPages) => {
       const total = lastPage.total;

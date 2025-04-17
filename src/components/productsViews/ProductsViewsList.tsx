@@ -16,7 +16,7 @@ interface ProductsViewsListProps {
 }
 
 export default function ProductsViewsList({ products, q, sortBy, order }: ProductsViewsListProps) {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSearchProducts({
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, error, isError } = useSearchProducts({
     q,
     sortBy,
     order,
@@ -27,6 +27,11 @@ export default function ProductsViewsList({ products, q, sortBy, order }: Produc
     return page.products;
   });
 
+  if (isError) {
+    console.error(error);
+    return <Typography>에러가 발생하였습니다. 잠시 후 다시 시도해 주세요.</Typography>;
+  }
+
   return (
     <section>
       {targetProducts.map((product) => (
@@ -36,8 +41,7 @@ export default function ProductsViewsList({ products, q, sortBy, order }: Produc
             alt={product.title}
             width={300}
             height={300}
-            objectFit="cover"
-            className="w-full max-w-[300px] max-md:max-w-[150px]"
+            className="w-full max-w-[300px] max-md:max-w-[150px] object-cover"
           />
           <div className="p-2 flex-1 min-w-[0px]">
             <Typography as="h2" className="font-semibold text-[18px]">

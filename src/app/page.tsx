@@ -3,33 +3,7 @@ import Typography from '@/components/typography/Typography';
 import ProductsViewsGrid from '@/components/productsViews/ProductsViewsGrid';
 import ProductsViewsList from '@/components/productsViews/ProductsViewsList';
 import ProductsSearchForm from '@/components/productsSearchForm/ProductsSearchForm';
-
-const findProducts = async (page = 1, limit = 20, q = '', sortBy = '', order = ''): Promise<Api.Products> => {
-  try {
-    const skip = (page - 1) * limit;
-    const params = new URLSearchParams();
-    params.set('limit', String(limit));
-    params.set('skip', String(skip));
-    if (q !== '') {
-      params.set('q', String(q));
-    }
-    if (sortBy !== '') {
-      params.set('sortBy', String(sortBy));
-      params.set('order', order);
-    }
-
-    const res = await fetch(`https://dummyjson.com/products/search?${params.toString()}`, {});
-    if (res.ok) {
-      return await res.json();
-    } else {
-      throw new Error('findProducts Failed', {
-        cause: `findProducts Failed: ${res.status}/${res.statusText}/${q}`,
-      });
-    }
-  } catch (e) {
-    throw e;
-  }
-};
+import { api } from '@/api';
 
 interface IndexProps {
   searchParams?: Promise<{
@@ -49,7 +23,7 @@ export default async function Index({ searchParams }: IndexProps) {
   const targetView = myCookie.get('my-cookie');
   let products;
   try {
-    products = await findProducts(1, 20, q, sortBy, order);
+    products = await api.productApi.findProducts(1, 20, q, sortBy, order);
   } catch (e) {
     console.error('findProducts', e);
   }
