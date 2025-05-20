@@ -22,7 +22,7 @@ export default function ProductsViewsGrid({ products, q, sortBy, order }: Produc
     order,
     initialData: products,
   });
-  const { ref } = useIntersectionObserver(() => fetchNextPage());
+  const { ref } = useIntersectionObserver<HTMLDivElement>(() => fetchNextPage());
   const targetProducts = data.pages.flatMap((page) => {
     return page.products;
   });

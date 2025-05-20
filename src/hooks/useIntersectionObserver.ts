@@ -1,7 +1,16 @@
 import { useEffect, useRef } from 'react';
 
-export const useIntersectionObserver = (callback: () => void) => {
-  const ref = useRef(null);
+interface IntersectionObserverOptions {
+  root?: Element | null;
+  rootMargin?: string;
+  threshold?: number | number[];
+}
+
+export const useIntersectionObserver = <T extends Element>(
+  callback: () => void,
+  options: IntersectionObserverOptions = {},
+) => {
+  const ref = useRef<T>(null);
 
   useEffect(() => {
     const element = ref.current;
@@ -11,16 +20,16 @@ export const useIntersectionObserver = (callback: () => void) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) callback();
       });
-    });
+    }, options);
 
     observer.observe(element);
 
     return () => {
       observer.disconnect();
     };
-  }, [callback]);
+  }, [callback, options]);
 
   return {
     ref,
-  };
+  } as const;
 };
